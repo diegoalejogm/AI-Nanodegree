@@ -137,7 +137,7 @@ class CustomPlayer:
 
     def minimax_val(self,game,depth,maximizing_player):
         children = game.next_games_w_movements()
-        if depth == 0 or len(children)==0: return self.score(game, self)
+        if depth == 0 or not children: return self.score(game, self)
         values = [self.minimax_val(game, not maximizing_player) for game,_ in children]
         func = None
         func = max if maximizing_player else min
@@ -173,7 +173,7 @@ class CustomPlayer:
 
         children = game.next_games_w_movements()
         minimax_children = [(self.minimax_val(gm[0], depth-1, not maximizing_player), gm[1]) for gm in children]
-        return max(minimax_children) if len(children) else (self.score(game, self), (-1,-1))
+        return max(minimax_children) if children else (self.score(game, self), (-1,-1))
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
@@ -211,14 +211,14 @@ class CustomPlayer:
             raise Timeout()
 
         children = game.next_games_w_movements()
-        if len(children)==0: return (self.score(game, self), (-1,-1))
+        if not children: return (self.score(game, self), (-1,-1))
         ab_children = [(self.alphabeta_min_val(gm[0], depth-1, alpha, beta), gm[1]) for gm in children]
         mvmnt = max(ab_children)
         return (mvmnt[0][0],mvmnt[1])
 
     def alphabeta_max_val(self, game, depth, alpha, beta):
         children, val = game.next_games_w_movements(), -math.inf
-        if depth == 0 or len(children)==0: return (self.score(game, self), alpha, beta)
+        if depth == 0 or not children: return (self.score(game, self), alpha, beta)
         for game,_ in children:
             v, a, b = self.alphabeta_min_val(game, depth-1, alpha, beta)
             val = max(val,v)
@@ -228,7 +228,7 @@ class CustomPlayer:
 
     def alphabeta_min_val(self, game, depth, alpha, beta):
         children, val = game.next_games_w_movements(), math.inf
-        if depth == 0 or len(children)==0: return (self.score(game, self), alpha, beta)
+        if depth == 0 or not children: return (self.score(game, self), alpha, beta)
         for game,_ in children:
             v, a, b = self.alphabeta_max_val(game, depth-1, alpha, beta)
             val = min(val,v)
