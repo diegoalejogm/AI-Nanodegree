@@ -167,9 +167,8 @@ class CustomPlayer:
         if depth == 0: return self.score(game, self)
 
         child_games = game.get_games_after_moves()
-        child_scores = [minimax(g, depth-1, not maximizing_player) for g in child_games]
-        score = max(child_scores) if maximizing_player else min(child_scores)
-        return score
+        games_n_scores = [ (minimax(g, depth-1, not maximizing_player), g) for g in child_games]
+        return max(games_n_scores) if maximizing_player else min(games_n_scores)
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
