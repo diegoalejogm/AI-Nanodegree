@@ -7,7 +7,7 @@ You must test your agent's strength against a set of agents with known
 relative strength using tournament.py and include the results in your report.
 """
 import random
-
+import math
 
 class Timeout(Exception):
     """Subclass base exception for code clarity."""
@@ -135,6 +135,14 @@ class CustomPlayer:
         # Return the best move from the last completed search iteration
         raise NotImplementedError
 
+    def minimax_val(self,game,depth,maximizing_player):
+        children = game.next_games_w_movements()
+        if depth == 0 or len(children)==0: return self.score(game, self)
+        values = [self.minimax_val(game, not maximizing_player) for game,_ in children]
+        func = None
+        func = max if maximizing_player else min
+        return func(values)
+
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
 
@@ -163,12 +171,9 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # Finish this function!
-        if depth == 0: return self.score(game, self)
-
-        child_games = game.get_games_after_moves()
-        games_n_scores = [ (minimax(g, depth-1, not maximizing_player), g) for g in child_games]
-        return max(games_n_scores) if maximizing_player else min(games_n_scores)
+        children = game.next_games_w_movements()
+        minimax_children = [(self.minimax_val(gm[0], depth-1, not maximizing_player), gm[1]) for gm in children]
+        return max(minimax_children) if len(children) else (self.score(game, self), (-1,-1))
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
@@ -205,5 +210,28 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        children = game.next_games_w_movements()
+        if len(children)==0: return (self.score(game, self), (-1,-1))
+        ab_children = [(self.alphabeta_min_val(gm[0], depth-1, alpha, beta), gm[1]) for gm in children]
+        mvmnt = max(ab_children)
+        return (mvmnt[0][0],mvmnt[1])
+
+    def alphabeta_max_val(self, game, depth, alpha, beta):
+        children, val = game.next_games_w_movements(), -math.inf
+        if depth == 0 or len(children)==0: return (self.score(game, self), alpha, beta)
+        for game,_ in children:
+            v, a, b = self.alphabeta_min_val(game, depth-1, alpha, beta)
+            val = max(val,v)
+            if val >= beta: return (val, alpha, beta)
+            alpha = max(alpha,a)
+        return (val, alpha, beta)
+
+    def alphabeta_min_val(self, game, depth, alpha, beta):
+        children, val = game.next_games_w_movements(), math.inf
+        if depth == 0 or len(children)==0: return (self.score(game, self), alpha, beta)
+        for game,_ in children:
+            v, a, b = self.alphabeta_max_val(game, depth-1, alpha, beta)
+            val = min(val,v)
+            if val <= alpha: return (val, alpha, beta)
+            beta = min(beta,b)
+        return (val, alpha, beta)
