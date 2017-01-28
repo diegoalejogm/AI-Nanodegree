@@ -205,6 +205,12 @@ class Board(object):
         self.__active_player__, self.__inactive_player__ = self.__inactive_player__, self.__active_player__
         self.move_count += 1
 
+    def get_games_after_moves(self):
+        """ Returns a list of the games after applying legal moves"""
+        child_games = [game.clone() for i in range(len(moves))]
+        for i, move in enumerate(moves): child_games[i].apply_move(move)
+        return child_games
+
     def is_winner(self, player):
         """ Test whether the specified player has won the game. """
         return player == self.inactive_player and not self.get_legal_moves(self.active_player)

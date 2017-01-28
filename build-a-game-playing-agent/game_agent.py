@@ -163,8 +163,13 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        # Finish this function!
+        if depth == 0: return self.score(game, self)
+
+        child_games = game.get_games_after_moves()
+        child_scores = [minimax(g, depth-1, not maximizing_player) for g in child_games]
+        score = max(child_scores) if maximizing_player else min(child_scores)
+        return score
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
