@@ -84,8 +84,6 @@ class CustomPlayer:
         self.time_left = None
         self.TIMER_THRESHOLD = timeout
 
-        self.ab_movs = dict()
-
     def get_move(self, game, legal_moves, time_left):
         """Search for the best move from the available legal moves and return a
         result before the time limit expires.
@@ -148,7 +146,7 @@ class CustomPlayer:
 
         except Timeout:
             # Handle any actions required at timeout, if necessary
-            pass
+            return move
 #        print('End: ',self.time_left())
         # Return the best move from the last completed search iteration
 #        print(game.print_board())
@@ -156,9 +154,9 @@ class CustomPlayer:
         return move
 
     def minimax_val(self,game,depth,maximizing_player):
-        if depth <= 0 : return self.score(game, self)
+        if depth == 0 : return self.score(game, self)
         children = game.next_games_w_movements()
-        if not children: return custom_score(game, self)
+        if not children: return self.score(game, self)
         values = [self.minimax_val(game, depth-1, not maximizing_player) for game,_ in children]
         if maximizing_player:
             return max(values)
@@ -192,6 +190,7 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
+
         children = game.next_games_w_movements()
         minimax_children = [(self.minimax_val(gm[0], depth-1, not maximizing_player), gm[1]) for gm in children]
         return max(minimax_children) if children else (self.score(game, self), (-1,-1))

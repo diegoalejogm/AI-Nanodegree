@@ -142,6 +142,10 @@ class Board(object):
                0 <= col < self.width and \
                self.__board_state__[row][col] == Board.BLANK
 
+    def next_games_w_movements(self):
+        """ Returns a list of games, movs after applying legal moves to current game"""
+        return [ (self.forecast_move(move),move) for move in self.get_legal_moves()]
+
     def get_blank_spaces(self):
         """
         Return a list of the locations that are still available on the board.
@@ -204,13 +208,6 @@ class Board(object):
         self.__board_state__[row][col] = self.__player_symbols__[self.active_player]
         self.__active_player__, self.__inactive_player__ = self.__inactive_player__, self.__active_player__
         self.move_count += 1
-
-    def next_games_w_movements(self):
-        """ Returns a list of games, movs after applying legal moves to current game"""
-        moves = self.get_legal_moves()
-        gams_n_movs = [ (self.copy(), move) for move in moves]
-        for game,move in gams_n_movs: game.apply_move(move)
-        return gams_n_movs
 
     def is_winner(self, player):
         """ Test whether the specified player has won the game. """
