@@ -158,10 +158,8 @@ class CustomPlayer:
         children = game.next_games_w_movements()
         if not children: return self.score(game, self)
         values = [self.minimax_val(game, depth-1, not maximizing_player) for game,_ in children]
-        if maximizing_player:
-            return max(values)
-        else:
-            return min(values)
+        if maximizing_player: return max(values)
+        else: return min(values)
 
     def minimax(self, game, depth, maximizing_player=True):
         """Implement the minimax search algorithm as described in the lectures.
@@ -196,9 +194,10 @@ class CustomPlayer:
         return max(minimax_children) if children else (self.score(game, self), (-1,-1))
 
     def alphabeta_max_val(self, game, depth, alpha, beta):
-        edges = game.get_legal_moves()
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+        edges, val = game.get_legal_moves(), -math.inf
         if depth == 0 or not edges: return self.score(game, self)
-        val = -math.inf
         for move in edges:
             child = game.forecast_move(move)
             v = self.alphabeta_min_val(child, depth-1, alpha, beta)
@@ -208,9 +207,10 @@ class CustomPlayer:
         return val
 
     def alphabeta_min_val(self, game, depth, alpha, beta):
-        edges = game.get_legal_moves()
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+        edges, val = game.get_legal_moves(), math.inf
         if depth == 0 or not edges: return self.score(game, self)
-        val = math.inf
         for move in edges:
             child = game.forecast_move(move)
             v = self.alphabeta_max_val(child, depth-1, alpha, beta)
@@ -261,8 +261,7 @@ class CustomPlayer:
             child = game.forecast_move(move)
             v = self.alphabeta_min_val(child, depth-1, alpha, beta)
             val, old_val = max(val,v), val
-            if val >= beta:
-                return (val,mvmnt)
+            if val >= beta: return (val,mvmnt)
             if old_val != val: mvmnt = move
             alpha = max(alpha,val)
         return (val,mvmnt)

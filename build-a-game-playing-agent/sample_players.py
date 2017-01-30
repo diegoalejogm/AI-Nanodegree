@@ -86,10 +86,10 @@ def improved_score(game, player):
         The heuristic value of the current game state
     """
     if game.is_loser(player):
-        return float("-inf")
+        return -999999999
 
     if game.is_winner(player):
-        return float("inf")
+        return 999999999
 
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
