@@ -140,15 +140,14 @@ def makeEvalStop(limit, timer, value=None):
     """
 
     def score(game, player):
-        if limit == game.counts[0]:
-            timer.time_limit = 0
-        elif timer.time_left() < 0:
-            raise TimeoutError("Timer expired during search. You must " +
+        if timer.time_left() < 0:
+            raise RuntimeError("Timer expired during search. You must " +
                                "return an answer before the timer reaches 0.")
+        elif limit == game.counts[0]:
+            timer.time_limit = 0
         return 0
 
     return score
-
 
 def makeBranchEval(first_branch):
     """Use a closure to create a heuristic function that evaluates to a nonzero
