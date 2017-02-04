@@ -14,6 +14,50 @@ class Timeout(Exception):
     """Subclass base exception for code clarity."""
     pass
 
+def heuristic1(game, player):
+    """Calculate the difference between the player's available moves and two times
+    the opponent's number of available moves. If board is winning board for player,
+    returns infinite, if its a losing board, returns -infinite.
+    """
+    if game.is_loser(player):
+        return -math.inf
+    if game.is_winner(player):
+        return math.inf
+
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(player_moves-2*opponent_moves)
+
+def heuristic2(game, player):
+    """Calculate the difference between the player's available moves and three times
+    the opponent's number of available moves. If board is winning board for player,
+    returns infinite, if its a losing board, returns -infinite.
+    """
+    if game.is_loser(player):
+        return -math.inf
+    if game.is_winner(player):
+        return math.inf
+
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(player_moves-3*opponent_moves)
+
+def heuristic3(game, player):
+    """Calculate the difference between the player's available moves and two times
+    the opponent's number of available moves. If board is winning board for player,
+    returns infinite, if its a losing board, returns -infinite.
+    """
+    if game.is_loser(player):
+        return -math.inf
+    if game.is_winner(player):
+        return math.inf
+
+    player_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(player_moves-1.5*opponent_moves)
+
+
+
 
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -35,14 +79,7 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-    if game.is_loser(player):
-        return -math.inf
-    if game.is_winner(player):
-        return math.inf
-
-    player_moves = len(game.get_legal_moves(player))
-    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(player_moves-2*opponent_moves)
+    return heuristic1
 
 
 
