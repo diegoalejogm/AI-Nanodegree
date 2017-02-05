@@ -79,7 +79,7 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-    return heuristic1
+    return heuristic1(game,player)
 
 
 
