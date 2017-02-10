@@ -1,0 +1,60 @@
+
+
+class Bot():
+
+    def __init__(self):
+        self.search_depth = 10
+
+    def nextMove(self):
+        move = (-1,-1)
+        func = self.alphabeta
+        if self.iterative:
+            i = 1
+            while True:
+                move = func(game, i)[1]
+                i+=1
+        else:
+            move = func(game, self.search_depth)[1]
+        except Timeout:
+            pass
+        return move
+
+    def alphabeta_max_val(self, game, depth, alpha, beta):
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+        edges, val_game = game.get_legal_moves(), (-math.inf, (-1,-1))
+        if depth == 0 or not edges: return (self.score(game, self), None)
+        for move in edges:
+            child = game.forecast_move(move)
+            vg = self.alphabeta_min_val(child, depth-1, alpha, beta)
+            val_game = max(val_game,(vg[0],move))
+            if val_game[0] >= beta: return val_game
+            alpha = max(alpha,val_game[0])
+        return val_game
+
+    def alphabeta_min_val(self, game, depth, alpha, beta):
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
+        edges, val_game = game.get_legal_moves(), (math.inf, (-1,-1))
+        if depth == 0 or not edges: return (self.score(game, self), None)
+        for move in edges:
+            child = game.forecast_move(move)
+            vg = self.alphabeta_max_val(child, depth-1, alpha, beta)
+            val_game = min(val_game,(vg[0],move))
+            if val_game[0] <= alpha: return val_game
+            beta = min(beta,val_game[0])
+        return val_game
+
+    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
+
+        return self.alphabeta_max_val(game,depth,alpha,beta)
+
+class Game():
+
+
+    def __init__():
+
+
+
+def play():
+    while(not gameOver()):
