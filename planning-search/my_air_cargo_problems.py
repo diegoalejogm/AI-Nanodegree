@@ -192,8 +192,16 @@ class AirCargoProblem(Problem):
         conditions by ignoring the preconditions required for an action to be
         executed.
         '''
-        # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
         count = 0
+        goals = set(self.goal)
+
+        actions = self.actions_list[:]
+#        actions = sorted(self.actions_list, key=lambda x: len(e for e in x.effect_add if e in goals), reverse=True)
+        while(goals):
+            next_node = max(actions, key=lambda x: len([eff for eff in x.effect_add if eff in goals]))
+            actions.remove(next_node)
+            goals= goals-set(next_node.effect_add)
+            count+=1
         return count
 
 
